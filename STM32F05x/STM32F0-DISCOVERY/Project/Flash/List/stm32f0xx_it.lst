@@ -1,0 +1,252 @@
+###############################################################################
+#                                                                             #
+# IAR ANSI C/C++ Compiler V6.60.1.5097/W32 for ARM      12/Aug/2013  10:36:22 #
+# Copyright 1999-2013 IAR Systems AB.                                         #
+#                                                                             #
+#    Cpu mode     =  thumb                                                    #
+#    Endian       =  little                                                   #
+#    Source file  =  E:\STM32F05x\STM32F0-DISCOVERY\Project\src\EvalTest\stm3 #
+#                    2f0xx_it.c                                               #
+#    Command line =  E:\STM32F05x\STM32F0-DISCOVERY\Project\src\EvalTest\stm3 #
+#                    2f0xx_it.c -D VECT_TAB_FLASH -lcN                        #
+#                    E:\STM32F05x\STM32F0-DISCOVERY\Project\Flash\List\ -o    #
+#                    E:\STM32F05x\STM32F0-DISCOVERY\Project\Flash\Obj\        #
+#                    --no_cse --no_unroll --no_inline --no_code_motion        #
+#                    --no_tbaa --no_clustering --no_scheduling --debug        #
+#                    --endian=little --cpu=Cortex-M0 -e --fpu=None            #
+#                    --dlib_config D:\IAR\arm\INC\c\DLib_Config_Normal.h      #
+#                    --preinclude stm32f0xx_conf.h -I                         #
+#                    E:\STM32F05x\STM32F0-DISCOVERY\Project\ -I               #
+#                    E:\STM32F05x\STM32F0-DISCOVERY\Project\src\EvalTest\ -I  #
+#                    E:\STM32F05x\STM32F0-DISCOVERY\Project\..\Libraries\STM3 #
+#                    2F0xx_StdPeriph_Driver\inc\ -I                           #
+#                    E:\STM32F05x\STM32F0-DISCOVERY\Project\..\Libraries\CMSI #
+#                    S\Device\ST\STM32F0xx\Include\ -I                        #
+#                    E:\STM32F05x\STM32F0-DISCOVERY\Project\..\Libraries\CMSI #
+#                    S\Include\ -Ol --use_c++_inline -I                       #
+#                    D:\IAR\arm\CMSIS\Include\                                #
+#    List file    =  E:\STM32F05x\STM32F0-DISCOVERY\Project\Flash\List\stm32f #
+#                    0xx_it.lst                                               #
+#    Object file  =  E:\STM32F05x\STM32F0-DISCOVERY\Project\Flash\Obj\stm32f0 #
+#                    xx_it.o                                                  #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+E:\STM32F05x\STM32F0-DISCOVERY\Project\src\EvalTest\stm32f0xx_it.c
+      1          /**
+      2            ******************************************************************************
+      3            * @file    SysTick/SysTick_Example/stm32f0xx_it.c 
+      4            * @author  MCD Application Team
+      5            * @version V0.1.0
+      6            * @date    11-November-2011
+      7            * @brief   Main Interrupt Service Routines.
+      8            *          This file provides template for all exceptions handler and 
+      9            *          peripherals interrupt service routine.
+     10            ******************************************************************************
+     11            * @attention
+     12            *
+     13            * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
+     14            * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
+     15            * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
+     16            * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
+     17            * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
+     18            * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+     19            *
+     20            * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+     21            ******************************************************************************
+     22            */ 
+     23          
+     24          /* Includes ------------------------------------------------------------------*/
+     25          #include "stm32f0xx_it.h"
+     26          #include "main.h"
+     27          
+     28          /** @addtogroup STM32F0xx_StdPeriph_Examples
+     29            * @{
+     30            */
+     31          
+     32          /** @addtogroup SysTick_Example
+     33            * @{
+     34            */ 
+     35          
+     36          /* Private typedef -----------------------------------------------------------*/
+     37          /* Private define ------------------------------------------------------------*/
+     38          /* Private macro -------------------------------------------------------------*/
+     39          /* Private variables ---------------------------------------------------------*/
+     40          /* Private function prototypes -----------------------------------------------*/
+     41          /* Private functions ---------------------------------------------------------*/
+     42          
+     43          /******************************************************************************/
+     44          /*            Cortex-M0 Processor Exceptions Handlers                         */
+     45          /******************************************************************************/
+     46          
+     47          /**
+     48            * @brief  This function handles NMI exception.
+     49            * @param  None
+     50            * @retval None
+     51            */
+     52          void Func()
+     53          { 
+     54            int i;
+     55            while(1)
+     56             {
+     57               if(GPIO_ReadInputDataBit(GPIOA,GPIO_Pin_0))
+     58               {
+     59                 delay(200000);
+     60                  if(GPIO_ReadInputDataBit(GPIOA,GPIO_Pin_0)&i==0)
+     61                  {
+     62                    delay(1000000);
+     63                   i++;
+     64                  GPIO_WriteBit(GPIOC, GPIO_Pin_9,Bit_SET );
+     65                  PWR_EnterSleepMode(PWR_SLEEPEntry_WFI);
+     66                  GPIO_ResetBits(GPIOC, GPIO_Pin_9);
+     67                  }
+     68                  else if(GPIO_ReadInputDataBit(GPIOA,GPIO_Pin_0)&i==1)
+     69                  {
+     70                    delay(1000000);
+     71                    i++;
+     72                  GPIO_WriteBit(GPIOC, GPIO_Pin_8,Bit_SET );
+     73                  PWR_EnterSTOPMode(PWR_Regulator_LowPower, PWR_STOPEntry_WFI);
+     74                  RCC_Configuration();//从停机模式下唤醒时钟会变慢，要重新配置时钟。
+     75                  GPIO_ResetBits(GPIOC, GPIO_Pin_8);
+     76                  }
+     77                  else 
+     78                  {
+     79                   delay(1000000);
+     80                   GPIO_WriteBit(GPIOC, GPIO_Pin_9,Bit_SET );
+     81                   GPIO_WriteBit(GPIOC, GPIO_Pin_8,Bit_SET );
+     82                   delay(1000000);
+     83                   PWR_WakeUpPinCmd(PWR_WakeUpPin_1,ENABLE);//  Under the standby must be used
+     84                   PWR_EnterSTANDBYMode();//外设不保持原先状态
+     85                  }      
+     86               }
+     87            
+     88             }
+     89          }
+     90          void  EXTI0_1_IRQHandler(void)
+     91          {
+     92              
+     93            if(EXTI_GetITStatus(EXTI_Line0)!=RESET)
+     94            {
+     95              PWR_EnterSleepMode(PWR_SLEEPEntry_WFI);
+     96              EXTI_ClearITPendingBit(EXTI_Line0);
+     97             }
+     98          }
+     99          void NMI_Handler(void)
+    100          {
+    101          }
+    102          /**
+    103            * @brief  This function handles Hard Fault exception.
+    104            * @param  None
+    105            * @retval None
+    106            */
+    107          void HardFault_Handler(void)
+    108          {
+    109            /* Go to infinite loop when Hard Fault exception occurs */
+    110            while (1)
+    111            {
+    112            }
+    113          }
+    114          
+    115          /**
+    116            * @brief  This function handles SVCall exception.
+    117            * @param  None
+    118            * @retval None
+    119            */
+    120          void SVC_Handler(void)
+    121          {
+    122          }
+    123          
+    124          /**
+    125            * @brief  This function handles PendSVC exception.
+    126            * @param  None
+    127            * @retval None
+    128            */
+    129          void PendSV_Handler(void)
+    130          {
+    131          }
+    132          
+    133          /**
+    134            * @brief  This function handles SysTick Handler.
+    135            * @param  None
+    136            * @retval None
+    137            */
+    138          void SysTick_Handler(void)
+    139          {
+    140            TimingDelay_Decrement();
+    141          }
+    142          
+    143          /******************************************************************************/
+    144          /*                 STM32F0xx Peripherals Interrupt Handlers                   */
+    145          /*  Add here the Interrupt Handler for the used peripheral(s) (PPP), for the  */
+    146          /*  available peripheral interrupt handler's name please refer to the startup */
+    147          /*  file (startup_stm32f0xx.s).                                            */
+    148          /******************************************************************************/
+    149          
+    150          /**
+    151            * @brief  This function handles PPP interrupt request.
+    152            * @param  None
+    153            * @retval None
+    154            */
+    155          /*void PPP_IRQHandler(void)
+    156          {
+    157          }*/
+    158          
+    159          /**
+    160            * @}
+    161            */ 
+    162          
+    163          /**
+    164            * @}
+    165            */ 
+    166          
+    167          /******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       8   EXTI0_1_IRQHandler
+         8   -> EXTI_ClearITPendingBit
+         8   -> EXTI_GetITStatus
+         8   -> PWR_EnterSleepMode
+       8   Func
+         8   -> GPIO_ReadInputDataBit
+         8   -> GPIO_ResetBits
+         8   -> GPIO_WriteBit
+         8   -> PWR_EnterSTANDBYMode
+         8   -> PWR_EnterSTOPMode
+         8   -> PWR_EnterSleepMode
+         8   -> PWR_WakeUpPinCmd
+         8   -> RCC_Configuration
+         8   -> delay
+       4   HardFault_Handler
+       0   NMI_Handler
+       0   PendSV_Handler
+       0   SVC_Handler
+       8   SysTick_Handler
+         8   -> TimingDelay_Decrement
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       4  ??DataTable0
+       4  ??DataTable0_1
+       4  ??DataTable0_2
+      26  EXTI0_1_IRQHandler
+     216  Func
+       4  HardFault_Handler
+       2  NMI_Handler
+       2  PendSV_Handler
+       2  SVC_Handler
+       8  SysTick_Handler
+
+ 
+ 272 bytes in section .text
+ 
+ 272 bytes of CODE memory
+
+Errors: none
+Warnings: 1
